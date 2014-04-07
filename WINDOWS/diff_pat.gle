@@ -1,0 +1,66 @@
+ !
+ ! gle code for creating crystal diagram
+ !
+ ! written by ...
+ 
+ v0_h =   0.96897861693546550     
+ v0_v =  -0.24714457291600092     
+ vH_h =   0.96897859664910513     
+ vH_v =   0.24714465245262920     
+ H_h =    0.0000000000000000     
+ H_v =    1.0000000000000000     
+ thetaB =    14.308608926784217     
+ alphaX =    0.0000000000000000     
+ H$ = "$x_2$"
+ V$ = "$x_3$"
+ hshift = 0.2
+ vshift = 0.0
+ 
+ size 3 3
+ set hei 0.2
+ 
+ ! draw axes
+ set color black
+ set lwidth 0.01
+ amove 1 1
+ rline 0 2 arrow end
+ amove 1.1 2.65
+ tex V$
+ amove 0.75 2.65
+ tex "$\vec{n}$"
+ amove 1 1
+ rline 2 0 arrow end
+ amove 2.7 1.1
+ tex H$
+ set lwidth 0
+ 
+ 
+ ! draw vectors
+ set color red
+ amove v0_h*(-1)+1  v0_v*(-1)+1
+ tex "$\vec{k^0}$"
+ rline v0_h v0_v arrow end 
+ 
+ set color red
+ amove 1 1 
+ rline vH_h vH_v  arrow end
+ rmove hshift vshift
+ tex "$\vec{k^H}$"
+ 
+ set color blue
+ amove 1 1 
+ rline H_h H_v arrow end
+ rmove hshift vshift
+ tex "$\vec{H}$"
+ 
+ set color green
+ amove 1 1 
+ rline -H_v*1.5 H_h*1.5 
+ amove 1 1 
+ rline  H_v*1.5 -H_h*1.5 
+ 
+ !draw crystal
+ set color black
+ amove 2 1
+ box -2 -0.1
+ 
