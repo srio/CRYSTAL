@@ -16,8 +16,8 @@
 ARCH := $(shell /scisoft/xop2.4/xop_uname)
 FC = gfortran -ffree-line-length-none
 #FC = g95 -ffree-line-length-huge
-#FFLAGS =   -static
-FFLAGS =   
+FFLAGS =   -static
+#FFLAGS =   
 COMPILEOPT=-cpp -D_COMPILE4NIX
 
 #in ESRF/NICE: 

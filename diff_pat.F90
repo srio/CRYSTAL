@@ -133,18 +133,6 @@ ELSE  ! mosaic case
 ENDIF
 oe1%a_bragg = a_braggDeg*torad
 
-!
-! check for impossible geometry
-!
-if ((oe1%f_refrac.eq.0).or.(oe1%f_refrac.eq.2)  ) then
-    if (abs(oe1%a_bragg).gt.abs(oe1%graze)) then
-        print*,'DIFF_PATT: Error in Bragg Geometry: Bragg angle larger than asymmetry angle'
-        print*,'           Bragg angle [deg]: ',oe1%graze*todeg
-        print*,'           Asymmetry angle [deg]: ',oe1%a_bragg*todeg
-        print*,'           ** aborting run **'
-        stop
-    endif
-endif
 
 if ((oe1%f_mosaic.eq.3).and.(oe1%f_refrac.eq.0)  ) then
     print*,'DIFF_PATT: Error in Bragg Geometry: Penning Polder method only for Laue'
@@ -222,6 +210,19 @@ call crystal(0, oe1, q_phot, vvin, vvout, bh, vnor, &
 !   call crystal  (1, oe1, q_phot, vvin, vvout, bh, vnor, & 
 !r_s, r_p,phase_s, phase_p, depht_mfp_s, depht_mfp_p, theta_b, &
 !ssr, spr)
+
+!
+! check for impossible geometry
+!
+if ((oe1%f_refrac.eq.0).or.(oe1%f_refrac.eq.2)  ) then
+    if (abs(oe1%a_bragg).gt.abs(oe1%graze)) then
+        print*,'DIFF_PATT: Error in Bragg Geometry: Bragg angle larger than asymmetry angle'
+        print*,'           Bragg angle [deg]: ',oe1%graze*todeg
+        print*,'           Asymmetry angle [deg]: ',oe1%a_bragg*todeg
+        print*,'           ** aborting run **'
+        stop
+    endif
+endif
 
 
 graze0 = asin(pi/q_phot/oe1%crystalData%d_spacing) 
