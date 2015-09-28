@@ -1874,7 +1874,7 @@ else if (oe1%f_refrac.eq.1) then
 else if (oe1%f_refrac.eq.2) then 
   rcs = zac_c1*zac_c2*(zac_x1-zac_x2)/(zac_c2*zac_x2-zac_c1*zac_x1) ! bragg T
 else if (oe1%f_refrac.eq.3) then 
-  rcs = (zac_x2*zac_c1-zac_x1-zac_c2)/(zac_x2-zac_x1)               ! laue T
+  rcs = (zac_x2*zac_c1-zac_x1*zac_c2)/(zac_x2-zac_x1)               ! laue T
 endif
 if (i_debug.GE.1) then
   write(i_debug,*) '<><>CRYSTAL_PERFECT: zac_c1: ',zac_c1
@@ -1922,7 +1922,7 @@ else if (oe1%f_refrac.eq.1) then
 else if (oe1%f_refrac.eq.2) then 
   rcp = zac_c1*zac_c2*(zac_x1-zac_x2)/(zac_c2*zac_x2-zac_c1*zac_x1) ! bragg T
 else if (oe1%f_refrac.eq.3) then 
-  rcp = (zac_x2*zac_c1-zac_x1-zac_c2)/(zac_x2-zac_x1)             ! laue T
+  rcp = (zac_x2*zac_c1-zac_x1*zac_c2)/(zac_x2-zac_x1)             ! laue T
 endif
 
 ! note division by |b| in intensity (thus sqrt(|b|) in amplitude) 

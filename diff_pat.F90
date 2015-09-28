@@ -195,8 +195,6 @@ endif
 !C
 !C Call CRYSTAL to calculate useful parameters
 !C
-WRITE(*,*) ' '
-WRITE(*,*) 'So far, we are working with:'
 
 OPEN    (23,FILE='diff_pat.par',STATUS='UNKNOWN')
 REWIND (23)
@@ -216,13 +214,17 @@ call crystal(0, oe1, q_phot, vvin, vvout, bh, vnor, &
 !
 if ((oe1%f_refrac.eq.0).or.(oe1%f_refrac.eq.2)  ) then
     if (abs(oe1%a_bragg).gt.abs(oe1%graze)) then
-        print*,'DIFF_PATT: Error in Bragg Geometry: Bragg angle larger than asymmetry angle'
+        print*,'DIFF_PATT: WARNING in Bragg Geometry: Bragg angle is usually larger than asymmetry angle'
         print*,'           Bragg angle [deg]: ',oe1%graze*todeg
         print*,'           Asymmetry angle [deg]: ',oe1%a_bragg*todeg
-        print*,'           ** aborting run **'
-        stop
+        !print*,'           ** aborting run **'
+        !stop
     endif
 endif
+if ((oe1%vin_bragg_uncorr(3).gt.0)) then
+    print*,'DIFF_PATT: WARNING in Geometry: incident beam is pointing outwards the cystal surface (0,0,1)'
+endif
+!!call plotgle(oe1%vin_bragg_uncorr,oe1%vout_bragg_uncorr,oe1%bh0,oe1,iplotangles)
 
 
 graze0 = asin(pi/q_phot/oe1%crystalData%d_spacing) 
@@ -276,6 +278,8 @@ If(oe1%f_mosaic .gt. 1)then
 endif
 
 ! call crystal in info mode (kwhat=1)
+WRITE(*,*) ' '
+WRITE(*,*) 'So far, we are working with:'
 call crystal(1, oe1, q_phot, vvin, vvout, bh, vnor, & 
              r_s, r_p,phase_s, phase_p, depht_mfp_s, depht_mfp_p) 
              !, theta_b, ssr, spr)
@@ -283,6 +287,8 @@ call crystal(1, oe1, q_phot, vvin, vvout, bh, vnor, &
 ! make graphical sketches
 call plotgle(oe1%vin_bragg_uncorr,oe1%vout_bragg_uncorr,oe1%bh0,oe1,iplotangles)
 call plotidl(oe1%vin_bragg_uncorr,oe1%vout_bragg_uncorr,oe1%bh0)
+
+!
 
 !todo: rm these variables, make direct call
 vnor = oe1%vnor
