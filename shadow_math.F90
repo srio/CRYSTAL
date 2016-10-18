@@ -32,7 +32,7 @@ Module shadow_math
 !----                                 versor, proj, vsum, vdist
 
     public :: wran, mysqrt
-    public :: rotate, spl_int, atan_2, gauss
+    public :: rotate, spl_int, lin_int, atan_2, gauss, binormal
     public :: scalar, dot, cross, norm, vector, versor, proj, vsum, vdist
     public :: gnormal, rotvector, mfp, cross_m_flag
     public :: qsf,cubspl
@@ -273,9 +273,67 @@ end function mysqrt
            END IF
    10  Z = X - G(1,I)
        Y = G(2,I) + Z*(G(3,I) + Z*(G(4,I) + Z*G(5,I)))
-      IER = 0
+       IER = 0
        RETURN
         END SUBROUTINE SPL_INT
+
+
+! C+++
+! C     SUBROUTINE    LIN_INT
+! C
+! C     PURPOSE    TO INTERPOLATE LINEARLY THE VALUE Y FOR A POINT X, 
+! C                USING ONLY THE ELEMENTS G(1,N) and G(2,N) OF THE ARRAY
+! C                G(5,N) FROM THE PROGRAM CUBSPL.
+! C
+! C     INPUT      G(5,N) AS FROM CUBSPL.
+! C                N, THE # OF DATA POINTS IN G(5,N).
+! C                X, THE POINT WHERE YOU WANT THE INTERPOLATION TO BE MADE.   
+! C 
+! C     OUTPUT     Y, THE INTERPOLATED VALUE.
+! C                IER =1 FOR ERROR, =0 OTHERWISE.
+! C
+! C---              
+        SUBROUTINE LIN_INT(G,N,X,Y,IER)
+
+       REAL(KIND=SKR),dimension(5,N),intent(in)  ::  G
+       REAL(KIND=SKR),               intent(in)  ::  X
+       INTEGER(KIND=SKI),            intent(in)  ::  N
+       REAL(KIND=SKR),               intent(out) ::  Y
+       REAL(KIND=SKR)                            ::  Z
+       INTEGER(KIND=SKI)              ::  I, IER
+       real(kind=skr)                 ::  gmin,gmax
+
+       GMAX = MAX(G(1,1),G(1,N))
+       GMIN = MIN(G(1,1),G(1,N))
+       IF ((X .LT. GMIN) .OR. (X .GT. GMAX)) THEN
+! please note that an error here for BM or WIGGLER may be due
+! to the use of an not-updated SRSPEC SRANG and SRDISTR
+                WRITE(6,*) 'LIN_INT: x is outside the interpolation range.'
+                WRITE(6,*) 'X, GMIN, GMAX: ',X,GMIN,GMAX
+                IER = 1
+                RETURN
+       ELSE IF (X .EQ. G(1,N)) THEN
+                I = N-1
+                GO TO 10
+       END IF
+       I = 0
+   21   IF (G(1,I+1) .LE. X) THEN
+                I = I + 1
+       GOTO 21
+           END IF
+   10  Z = X - G(1,I)
+       IF (I .EQ. N)  THEN
+           WRITE(6,*) 'LIN_INT: End point. Set previous one'
+           I = I-1
+       END IF
+       !cubic spline Y = G(2,I) + Z*(G(3,I) + Z*(G(4,I) + Z*G(5,I)))
+       !liner interpolation
+       Y = G(2,I) + Z* (G(2,I+1) -G(2,I))/(G(1,I+1)-G(1,I))
+       IER = 0
+       RETURN
+        END SUBROUTINE LIN_INT
+
+
 
 !C ++++
 !C
@@ -710,6 +768,80 @@ end function mysqrt
         END SUBROUTINE GAUSS
 
 
+!------------------------------------------------------------------------------------------------
+
+! C +++
+! C  SUBROUTINE BINORMAL
+! C
+! C  PURPOSE  Generate a bivariate normal distribution with
+! C           independent sigmas and a correlation
+! C
+! C  INPUT  sigma1, sigma2, rho (correlation)
+! C
+! C  OUTPUT  X,X1 two binormal variate
+! C
+! C  ALGORITHM  compute the Cholesky decomposition
+! C
+! C  TEST use emittance_test preprocessor
+! C
+! C  srio@esrf.eu 20140610: written, based on gauss()
+! C
+! C  
+! C ---
+        SUBROUTINE BINORMAL (sigma1,sigma2,rho,x1,x2,IS)
+
+        implicit none
+        real(kind=skr),       intent(in)   :: sigma1, sigma2, rho
+        real(kind=skr),       intent(out)  :: x1, x2
+        integer(kind=ski),    intent(out)  :: is
+
+        real(kind=skr)                     :: r1,r2,z1,z2
+        real(kind=skr)                     :: U11,U12,U21,U22
+
+!C 
+!C the covariance matrix is:
+!C 
+!     [  c11  c12  ]     [  sigma1^2           rho*sigma1*sigma2   ]
+!     [  c21  c22  ]  =  [  rho*sigma1*sigma2  sigma2^2            ]
+!
+!
+!        C11 =   sigma1**2 
+!        C22 =   sigma2**2 
+!        C21 =   rho*sigma1*sigma2
+
+!
+! calculate U bu Cholesky decomposition of C
+!
+! in Mathematica: 
+! cov = {{S1^2, rho S1 S2}, {rho S1 S2, S2^2}}
+! Uc = FullSimplify[CholeskyDecomposition[cov]]
+! {{Sqrt[S1^2], (rho S1 S2)/Sqrt[S1^2]}, {0, Sqrt[ S2 (S2 - rho Conjugate[rho] Conjugate[S2])]}}
+! 
+
+        U11 = sigma1
+        U21 = sigma2*rho
+        U12 = 0.0
+        U22 = sigma2 * sqrt( 1.0-rho**2 ) 
+        
+!C 
+!C  Entry for computation 
+!C  Generates first the two normal variates with sigma=1 (Box & Muller)
+!C 
+        R1 = WRAN(IS)
+        R2 = WRAN(IS)
+        Z1 = SQRT(-2*LOG(R1))*COS(TWOPI*R2)
+        Z2 = SQRT(-2*LOG(R1))*SIN(TWOPI*R2)
+!C 
+!C  generates now the new variates
+!C 
+        x1 = Z1*U11 + Z2*U12
+        x2 = Z1*U21 + Z2*U22
+
+        RETURN
+        END SUBROUTINE BINORMAL
+!------------------------------------------------------------------------------------------------
+
+
 ! C
 ! C	SUBROUTINE GNORMAL
 ! C
@@ -977,7 +1109,7 @@ End Subroutine rotvector
 ! C distribution law. We initialize the subroutine (flag negative) 
 ! C calling it with ARG the minimum and the maximun of the interval
 ! C in which we want the result. 
-! C Iflag=-1 initializes the minimum and iflag=-2 the maximum
+! C Iflag=-2 initializes the minimum and iflag=-1 the maximum
 ! C After that, we call again the subroutine with a non negative 
 ! C flag to have the result.
 ! C
@@ -1245,7 +1377,8 @@ SUBROUTINE CUBSPL(G, Y, N, IER)
       !  ('CUBSPL','At least 4 data points are needed for splines.',itmp)
       IF (N.LT.4) THEN
         print *,'CUBSPL: At least 4 data points are needed for splines.',itmp
-        STOP 'Aborted'
+        print *,'Error: CUBSPL: Aborted'
+        ! STOP 'Aborted'
       END IF
       DO J = 1, N-1
         IF (G(1,J).GT.G(1,J+1)) THEN
@@ -1524,8 +1657,9 @@ END FUNCTION RAND_PENELOPE
        Y = SIGMA * RINFM
   9000  CONTINUE
     !    CALL UERTST(IER,6HMERFI )
-       print *,"Error from math routine merfi. Called with: ",P
-       stop
+       print *,"Error: MERFI: Error from math routine merfi. Called with: ",P
+       return 
+       ! stop
   9005  RETURN
         END SUBROUTINE MERFI
 ! C   IMSL ROUTINE NAME   - MERRC=ERFC
@@ -1625,8 +1759,8 @@ END FUNCTION RAND_PENELOPE
      GO TO 9005
  9000  CONTINUE
     !      CALL UERTST(IER,6HMDNRIS)
-     print *,"Error from math routine mdnris. Called with: ",P
-     stop
+     print *,"Error: MDNRIS: Error from math routine mdnris. Called with: ",P
+     ! stop
  9005  RETURN
     END SUBROUTINE MDNRIS
 
@@ -3084,8 +3218,8 @@ SUBROUTINE IBCCCU (F,X,NX,Y,NY,C,IC,WK,IER)
       IF (IER .EQ. 0) GO TO 9005                                        
  9000 CONTINUE                                                          
       !CALL UERTST(IER,6HIBCCCU)                                         
-      PRINT *,'IBCCCU Error'
-      STOP 'Aborted'
+      PRINT *,'Error: IBCCCU: Error in math routine ibcccu.'
+      !STOP 'Aborted'
  9005 RETURN                                                            
 END SUBROUTINE IBCCCU                                                              
 !C   IMSL ROUTINE NAME   - IBCDCU                                        

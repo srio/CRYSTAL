@@ -46,16 +46,16 @@ endif
 
 all: clean diff_pat compliance
 
-compliance: compliance.F90 shadow_globaldefinitions.F90 stringio.F90 shadow_math.F90 elasticity.F90
-	$(FC) $(FFLAGS) $(COMPILEOPT) -c shadow_globaldefinitions.F90
+compliance: compliance.F90 shadow_globaldefinitions.f90 stringio.F90 shadow_math.F90 elasticity.F90
+	$(FC) $(FFLAGS) $(COMPILEOPT) -c shadow_globaldefinitions.f90
 	$(FC) $(FFLAGS) -c shadow_math.F90
 	$(FC) $(FFLAGS) -c stringio.F90
 	$(FC) $(FFLAGS) -c elasticity.F90
 	$(FC) $(FFLAGS) -c compliance.F90
 	$(FC) $(FFLAGS) -o compliance shadow_globaldefinitions.o stringio.o shadow_math.o elasticity.o compliance.o
 
-diff_pat: diff_pat.F90 crystal3.F90 shadow_globaldefinitions.F90 stringio.F90 shadow_math.F90 elasticity.F90
-	$(FC) $(FFLAGS) $(COMPILEOPT) -c shadow_globaldefinitions.F90
+diff_pat: diff_pat.F90 crystal3.F90 shadow_globaldefinitions.f90 stringio.F90 shadow_math.F90 elasticity.F90
+	$(FC) $(FFLAGS) $(COMPILEOPT) -c shadow_globaldefinitions.f90
 	$(FC) $(FFLAGS) -c shadow_math.F90
 	$(FC) $(FFLAGS) -c stringio.F90
 	$(FC) $(FFLAGS) -c elasticity.F90
