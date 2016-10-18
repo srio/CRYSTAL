@@ -1309,7 +1309,7 @@ SUBROUTINE CRYSTAL_SET_VECTORS (oe1)
 implicit none
                                
 type(oeSetup),intent(inout)   :: oe1
-real(kind=skr),dimension(3)   :: VNOR,VPAR,AXIS,BH ,BH0
+real(kind=skr),dimension(3)   :: VNOR,VPAR,AXIS,BH ,BH0,vtmp
 real(kind=skr),dimension(3)   :: VIN_BRAGG,VIN_BRAGG_UNCORR,VIN_BRAGG_ENERGY
 real(kind=skr),dimension(3)   :: VOUT_BRAGG,VOUT_BRAGG_UNCORR,VOUT_BRAGG_ENERGY
 
@@ -1358,6 +1358,7 @@ integer(kind=ski) :: i_debug=0
 !
         call rodrigues(-bh0, axis, (pi/2-abs(oe1%graze)) , vin_bragg_uncorr)  
 
+
         if ((dot_product(bh0,vin_bragg_uncorr)) .gt. 0) then 
            print*,'CRYSTAL_SET: H.vin: ',dot_product(bh0,vin_bragg_uncorr)
            print*,'CRYSTAL_SET: H.k_in > 0   => aborted '
@@ -1373,6 +1374,18 @@ integer(kind=ski) :: i_debug=0
 ! Bragg position (for energy scan)
 !
         call rodrigues(-bh0,axis,(pi/2-abs(oe1%theta_b_cor)),vin_bragg_energy) 
+
+
+!
+! be sure that we always enter from the upper side 
+! Bug reported by sonia.francoual at desy.de because it produced
+! crystal reflectivities larger than one.
+!
+        if (vin_bragg_uncorr(3) .gt. 0) then
+            call rodrigues(-bh0, axis, -1.0*(pi/2-abs(oe1%graze)) , vin_bragg_uncorr)  
+            call rodrigues(-bh0, axis, -1.0*(pi/2-abs(oe1%theta_b_cor)),vin_bragg) 
+            call rodrigues(-bh0, axis, -1.0*(pi/2-abs(oe1%theta_b_cor)),vin_bragg_energy) 
+        endif
 
 !
 ! output directions
