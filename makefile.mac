@@ -17,7 +17,9 @@ ARCH = darwin
 FC = gfortran -ffree-line-length-none
 #FC = g95 -ffree-line-length-huge
 #FFLAGS =   -static
-FFLAGS =   
+FFLAGS = 
+LFLAGS =   -static-libgfortran -lgfortran -mmacosx-version-min=10.13
+#-lgcc -lSystem -nodefaultlibs -mmacosx-version-min=10.12 -fbacktrace -Wall -Wextra -pedantic -std=f2008 -Wno-unused-parameter -Wno-maybe-uninitialized 
 COMPILEOPT=-cpp -D_COMPILE4NIX
 
 
@@ -29,7 +31,7 @@ compliance: compliance.F90 shadow_globaldefinitions.f90 stringio.F90 shadow_math
 	$(FC) $(FFLAGS) -c stringio.F90
 	$(FC) $(FFLAGS) -c elasticity.F90
 	$(FC) $(FFLAGS) -c compliance.F90
-	$(FC) $(FFLAGS) -o compliance shadow_globaldefinitions.o stringio.o shadow_math.o elasticity.o compliance.o
+	$(FC) $(LFLAGS) -o compliance shadow_globaldefinitions.o stringio.o shadow_math.o elasticity.o compliance.o
 
 diff_pat: diff_pat.F90 crystal3.F90 shadow_globaldefinitions.f90 stringio.F90 shadow_math.F90 elasticity.F90
 	$(FC) $(FFLAGS) $(COMPILEOPT) -c shadow_globaldefinitions.f90
@@ -38,7 +40,7 @@ diff_pat: diff_pat.F90 crystal3.F90 shadow_globaldefinitions.f90 stringio.F90 sh
 	$(FC) $(FFLAGS) -c elasticity.F90
 	$(FC) $(FFLAGS) -c crystal3.F90
 	$(FC) $(FFLAGS) -c diff_pat.F90
-	$(FC) $(FFLAGS) -o diff_pat shadow_globaldefinitions.o stringio.o shadow_math.o elasticity.o crystal3.o diff_pat.o   
+	$(FC) $(LFLAGS) -o diff_pat shadow_globaldefinitions.o stringio.o shadow_math.o elasticity.o crystal3.o diff_pat.o   
 
 clean: 
 	/bin/rm -f *.mod *.o diff_pat diff_pat.dat diff_pat.par *.mod compliance  compliance
