@@ -1,0 +1,52 @@
+
+#
+# Usage:
+#	make            [to create the executable diff_pat]
+#	make install	 [to install  it in the correct directory]
+#	make clean	 [to clean the source directory]
+#
+#
+# --------------------------------------------------------------
+#   in ESRF/NICE: 
+#     . /scisoft/ESRF_sw/opteron2/set_environment
+#
+# System definition (architecture)
+#
+
+ARCH = linux
+#FC = gfortran -cpp -fPIC -ffree-line-length-none -O2 -fomit-frame-pointer -D_COMPILE4MAX
+FC = f77 -cpp -fPIC -ffree-line-length-none   -O2 -fomit-frame-pointer -D_COMPILE4NIX 
+FCLINK = f77   
+FFLAGS = 
+#LFLAGS =   -static-libgfortran -lgfortran -lgcc -lSystem -mmacosx-version-min=10.13 /usr/local/gfortran/lib/libquadmath.a
+#COMPILEOPT=-cpp -D_COMPILE4NIX
+LINKFLAGS = -static-libgfortran -static-libgcc
+
+
+all: clean diff_pat compliance
+
+compliance: compliance.f90 shadow_globaldefinitions.f90 stringio.f90 shadow_math.f90 elasticity.f90
+	$(FC) $(FFLAGS) -c shadow_globaldefinitions.f90
+	$(FC) $(FFLAGS) -c shadow_math.f90
+	$(FC) $(FFLAGS) -c stringio.f90
+	$(FC) $(FFLAGS) -c elasticity.f90
+	$(FC) $(FFLAGS) -c compliance.f90
+	$(FCLINK) -o compliance shadow_globaldefinitions.o stringio.o shadow_math.o elasticity.o compliance.o $(LINKFLAGS)
+
+diff_pat: diff_pat.f90 crystal3.f90 shadow_globaldefinitions.f90 stringio.f90 shadow_math.f90 elasticity.f90
+	$(FC) $(FFLAGS) -c shadow_globaldefinitions.f90
+	$(FC) $(FFLAGS) -c shadow_math.f90
+	$(FC) $(FFLAGS) -c stringio.f90
+	$(FC) $(FFLAGS) -c elasticity.f90
+	$(FC) $(FFLAGS) -c crystal3.f90
+	$(FC) $(FFLAGS) -c diff_pat.f90
+	$(FCLINK) -o diff_pat shadow_globaldefinitions.o stringio.o shadow_math.o elasticity.o crystal3.o diff_pat.o $(LINKFLAGS)
+
+clean: 
+	/bin/rm -f *.mod *.o diff_pat diff_pat.dat diff_pat.par *.mod compliance  compliance
+
+install:
+	cp diff_pat ./../../bin.$(ARCH)/diff_pat
+	cp diff_pat ./../../../xop2.3/bin.$(ARCH)/diff_pat
+	cp compliance ./../../bin.$(ARCH)/compliance
+	cp compliance ./../../../xop2.3/bin.$(ARCH)/compliance

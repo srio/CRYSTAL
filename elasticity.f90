@@ -25,7 +25,8 @@ implicit none
 !real(kind=skr),parameter,public   ::  torad= 0.017453292519943295769237D0
 
 
-type, public, bind(C) :: crystalElasticity
+!type, public, bind(C) :: crystalElasticity
+type, public :: crystalElasticity
   ! input type: 0:from hkl, 1:from valong,vperp,vnor, 2:from file
   integer(kind=ski)                       :: ielasticity=0  
   ! Poisson ratio (for isotropic crystals)

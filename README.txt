@@ -14,3 +14,7 @@ srio@esrf.eu    2014-03-24
 In Mac: 
 
 make -f makefile.mac clean all
+
+In Linux: 
+
+make -f makefile.unix clean all

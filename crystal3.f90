@@ -62,7 +62,8 @@ real(kind=8) :: B_factor
 ! (data usually created by a preprocessor)
 !
 integer(kind=ski),public,parameter        :: NMAXENER=1000, NMAXATOMS=100
-type, public, bind(C) :: crystalData
+!type, public, bind(C) :: crystalData
+type, public :: crystalData
     !C   RN: the constant (e^2/mc^2)/V or the ration between the classical e- 
     !C        radius and the volume of the unit cell [cm^(-2)]
     real(kind=skr)                               :: rn,d_spacing
@@ -87,7 +88,8 @@ end type crystalData
 ! this is the type that contains all the crystal information needed
 ! by crystal calculations. 
 !
-type, public, bind(C) :: oeSetup
+!type, public, bind(C) :: oeSetup
+type, public :: oeSetup
     ! these are user inputs
     real(kind=skr)        :: thickness=0.1D0  ! crystal thickness 
     integer(kind=ski)     :: f_bragg_a=0      ! asymmetric?
