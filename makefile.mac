@@ -14,9 +14,7 @@
 #
 
 ARCH = darwin
-FC = gfortran -ffree-line-length-none
-#FC = g95 -ffree-line-length-huge
-#FFLAGS =   -static
+FC = gfortran -cpp -fPIC -ffree-line-length-none -O2 -fomit-frame-pointer -D_COMPILE4MAX
 FFLAGS = 
 LFLAGS =   -static-libgfortran -lgfortran -lgcc -lSystem -mmacosx-version-min=10.13 /usr/local/gfortran/lib/libquadmath.a
 COMPILEOPT=-cpp -D_COMPILE4NIX
@@ -24,21 +22,21 @@ COMPILEOPT=-cpp -D_COMPILE4NIX
 
 all: clean diff_pat compliance
 
-compliance: compliance.F90 shadow_globaldefinitions.f90 stringio.F90 shadow_math.F90 elasticity.F90
-	$(FC) $(FFLAGS) $(COMPILEOPT) -c shadow_globaldefinitions.f90
-	$(FC) $(FFLAGS) -c shadow_math.F90
-	$(FC) $(FFLAGS) -c stringio.F90
-	$(FC) $(FFLAGS) -c elasticity.F90
-	$(FC) $(FFLAGS) -c compliance.F90
+compliance: compliance.f90 shadow_globaldefinitions.f90 stringio.f90 shadow_math.f90 elasticity.f90
+	$(FC) $(FFLAGS) -c shadow_globaldefinitions.f90
+	$(FC) $(FFLAGS) -c shadow_math.f90
+	$(FC) $(FFLAGS) -c stringio.f90
+	$(FC) $(FFLAGS) -c elasticity.f90
+	$(FC) $(FFLAGS) -c compliance.f90
 	ld -o compliance -no_compact_unwind -arch x86_64 -macosx_version_min 10.13.0 -lSystem /usr/local/gfortran/lib/libgfortran.a /usr/local/gfortran/lib/libquadmath.a /usr/local/gfortran/lib/gcc/x86_64-apple-darwin16/6.3.0/libgcc.a shadow_globaldefinitions.o stringio.o shadow_math.o elasticity.o compliance.o
 
-diff_pat: diff_pat.F90 crystal3.F90 shadow_globaldefinitions.f90 stringio.F90 shadow_math.F90 elasticity.F90
-	$(FC) $(FFLAGS) $(COMPILEOPT) -c shadow_globaldefinitions.f90
-	$(FC) $(FFLAGS) -c shadow_math.F90
-	$(FC) $(FFLAGS) -c stringio.F90
-	$(FC) $(FFLAGS) -c elasticity.F90
-	$(FC) $(FFLAGS) -c crystal3.F90
-	$(FC) $(FFLAGS) -c diff_pat.F90
+diff_pat: diff_pat.f90 crystal3.f90 shadow_globaldefinitions.f90 stringio.f90 shadow_math.f90 elasticity.f90
+	$(FC) $(FFLAGS) -c shadow_globaldefinitions.f90
+	$(FC) $(FFLAGS) -c shadow_math.f90
+	$(FC) $(FFLAGS) -c stringio.f90
+	$(FC) $(FFLAGS) -c elasticity.f90
+	$(FC) $(FFLAGS) -c crystal3.f90
+	$(FC) $(FFLAGS) -c diff_pat.f90
 	ld -o diff_pat -no_compact_unwind -arch x86_64 -macosx_version_min 10.13.0 -lSystem /usr/local/gfortran/lib/libgfortran.a /usr/local/gfortran/lib/libquadmath.a /usr/local/gfortran/lib/gcc/x86_64-apple-darwin16/6.3.0/libgcc.a shadow_globaldefinitions.o stringio.o shadow_math.o elasticity.o crystal3.o diff_pat.o   
 
 clean: 

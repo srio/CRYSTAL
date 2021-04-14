@@ -67,7 +67,7 @@ type, public, bind(C) :: crystalData
     !C        radius and the volume of the unit cell [cm^(-2)]
     real(kind=skr)                               :: rn,d_spacing
     integer(kind=ski)                            :: itype
-    integer(kind=ski),dimension(NMAXATOMS)       :: atnum
+    real(kind=skr),dimension(NMAXATOMS)          :: atnum
     real(kind=skr),dimension(NMAXATOMS)          :: temper
     integer(kind=ski)                            :: nbatom
     complex(kind=skx),dimension(NMAXATOMS)       :: G,G_BAR
