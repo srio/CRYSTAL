@@ -15,8 +15,8 @@
 
 ARCH = linux
 #FC = gfortran -cpp -fPIC -ffree-line-length-none -O2 -fomit-frame-pointer -D_COMPILE4MAX
-FC = f77 -cpp -fPIC -ffree-line-length-none   -O2 -fomit-frame-pointer -D_COMPILE4NIX 
-FCLINK = f77   
+FC = gfortran -cpp -fPIC -ffree-line-length-none   -O2 -fomit-frame-pointer -D_COMPILE4NIX 
+FCLINK = gfortran   
 FFLAGS = 
 #LFLAGS =   -static-libgfortran -lgfortran -lgcc -lSystem -mmacosx-version-min=10.13 /usr/local/gfortran/lib/libquadmath.a
 #COMPILEOPT=-cpp -D_COMPILE4NIX
