@@ -367,7 +367,7 @@ do i=1,scanpoints !C main loop over the scanning points ===== starts ====
         if (scanunit.eq.1) then
           scanval2 = scanval*1D-6
         else if (scanunit.eq.2) then
-          scanval2 = scanval*torad
+          scanval2 = (90+scanval)*torad
         else if (scanunit.eq.3) then
           scanval2 = scanval*torad/3600D0
         else
