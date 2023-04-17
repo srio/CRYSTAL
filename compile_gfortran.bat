@@ -2,10 +2,10 @@ del *.o *.mod
 
 
 
-c:\progra~1\gfortran\bin\gfortran.exe -static -ffree-line-length-none -O2 -c shadow_globaldefinitions.f90  
-c:\progra~1\gfortran\bin\gfortran.exe -static -ffree-line-length-none     -c stringio.f90     
-c:\progra~1\gfortran\bin\gfortran.exe -static -ffree-line-length-none     -c shadow_math.f90 
-c:\progra~1\gfortran\bin\gfortran.exe -static -ffree-line-length-none     -c elasticity.f90             
-c:\progra~1\gfortran\bin\gfortran.exe -static -ffree-line-length-none -O2 -c crystal3.f90
-c:\progra~1\gfortran\bin\gfortran.exe -static -ffree-line-length-none -O2 -c diff_pat.f90
-c:\progra~1\gfortran\bin\gfortran.exe -static -ffree-line-length-none -O2 -o diff_pat.exe *.o
+c:\mingw64\bin\gfortran.exe -static -ffree-line-length-none -O2 -c -cpp -D_COMPILE4WIN shadow_globaldefinitions.f90  
+c:\mingw64\bin\gfortran.exe -static -ffree-line-length-none     -c -cpp -D_COMPILE4WIN stringio.f90     
+c:\mingw64\bin\gfortran.exe -static -ffree-line-length-none     -c -cpp -D_COMPILE4WIN shadow_math.f90 
+c:\mingw64\bin\gfortran.exe -static -ffree-line-length-none     -c -cpp -D_COMPILE4WIN elasticity.f90             
+c:\mingw64\bin\gfortran.exe -static -ffree-line-length-none -O2 -c -cpp -D_COMPILE4WIN crystal3.f90
+c:\mingw64\bin\gfortran.exe -static -ffree-line-length-none -O2 -c -cpp -D_COMPILE4WIN diff_pat.f90
+c:\mingw64\bin\gfortran.exe -static -ffree-line-length-none -O2 -o diff_pat.exe *.o
